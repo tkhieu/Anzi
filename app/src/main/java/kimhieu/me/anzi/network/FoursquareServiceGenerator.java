@@ -1,8 +1,13 @@
 package kimhieu.me.anzi.network;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.HttpUrl;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -24,6 +29,18 @@ public class FoursquareServiceGenerator {
         logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         httpClientBuilder.addInterceptor(logging);
+        httpClientBuilder.addInterceptor(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                HttpUrl.Builder builder = chain.request().url().newBuilder();
+                builder.addQueryParameter("client_id", "AVAYIEK1UEMN1JDKTBZCYKRYWOMVIORT3IWSOXVP4HFESYKD");
+                builder.addQueryParameter("client_secret", "HXGMTLOS4KKDI1EJS1BMJ0O3XKGULIX22WUJJOSF3MYT2AHM");
+                HttpUrl url = builder.build();
+                Request.Builder reqBuilder = chain.request().newBuilder();
+                reqBuilder.url(url);
+                return chain.proceed(reqBuilder.build());
+            }
+        });
         httpClientBuilder
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)

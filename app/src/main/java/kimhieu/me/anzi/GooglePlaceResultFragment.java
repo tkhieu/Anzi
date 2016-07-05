@@ -6,11 +6,16 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import kimhieu.me.anzi.dummy.DummyContent;
+import kimhieu.me.anzi.events.KeywordSubmitEvent;
 
 /**
  * A fragment representing a list of Items.
@@ -52,6 +57,11 @@ public class GooglePlaceResultFragment extends Fragment {
         }
     }
 
+    @Subscribe
+    public void onEvent(KeywordSubmitEvent event) {
+
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -84,5 +94,11 @@ public class GooglePlaceResultFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
     }
 }

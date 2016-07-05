@@ -6,11 +6,22 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import kimhieu.me.anzi.dummy.DummyContent;
+import kimhieu.me.anzi.events.KeywordSubmitEvent;
+import kimhieu.me.anzi.models.foursquare.FoursquareResponse;
+import kimhieu.me.anzi.network.FoursquareApi;
+import kimhieu.me.anzi.network.FoursquareServiceGenerator;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A fragment representing a list of Items.
@@ -25,6 +36,7 @@ public class FoursquareResultFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+    FoursquareApi foursquareApi;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -71,6 +83,22 @@ public class FoursquareResultFragment extends Fragment {
         return view;
     }
 
+    @Subscribe
+    public void onEvent(KeywordSubmitEvent event) {
+        foursquareApi = FoursquareServiceGenerator.createService(FoursquareApi.class);
+        Call<FoursquareResponse> call = foursquareApi.searchVenue("20130815", "10.7960682,106.6760491", event.getmQuery());
+        call.enqueue(new Callback<FoursquareResponse>() {
+            @Override
+            public void onResponse(Call<FoursquareResponse> call, Response<FoursquareResponse> response) {
+                Log.d("Success", String.valueOf(response.body().getResponse().getVenues().size()));
+            }
+
+            @Override
+            public void onFailure(Call<FoursquareResponse> call, Throwable t) {
+                Log.d("Failure", t.getMessage());
+            }
+        });
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -84,5 +112,11 @@ public class FoursquareResultFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
     }
 }
