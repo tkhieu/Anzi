@@ -9,6 +9,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import kimhieu.me.anzi.dummy.DummyContent.DummyItem;
+import kimhieu.me.anzi.models.foursquare.Venue;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
@@ -17,10 +18,10 @@ import kimhieu.me.anzi.dummy.DummyContent.DummyItem;
  */
 public class FoursquareResultRecyclerViewAdapter extends RecyclerView.Adapter<FoursquareResultRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<Venue> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public FoursquareResultRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public FoursquareResultRecyclerViewAdapter(List<Venue> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -35,8 +36,8 @@ public class FoursquareResultRecyclerViewAdapter extends RecyclerView.Adapter<Fo
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.mIdView.setText(mValues.get(position).getName());
+        holder.mContentView.setText(mValues.get(position).getLocation().toString());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,7 +45,7 @@ public class FoursquareResultRecyclerViewAdapter extends RecyclerView.Adapter<Fo
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
+//                    mListener.onListFragmentInteraction(holder.mItem);
                 }
             }
         });
@@ -59,7 +60,7 @@ public class FoursquareResultRecyclerViewAdapter extends RecyclerView.Adapter<Fo
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
-        public DummyItem mItem;
+        public Venue mItem;
 
         public ViewHolder(View view) {
             super(view);

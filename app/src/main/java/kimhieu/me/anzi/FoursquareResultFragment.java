@@ -14,9 +14,12 @@ import android.view.ViewGroup;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import kimhieu.me.anzi.dummy.DummyContent;
+import java.util.ArrayList;
+import java.util.List;
+
 import kimhieu.me.anzi.events.KeywordSubmitEvent;
 import kimhieu.me.anzi.models.foursquare.FoursquareResponse;
+import kimhieu.me.anzi.models.foursquare.Venue;
 import kimhieu.me.anzi.network.FoursquareApi;
 import kimhieu.me.anzi.network.FoursquareServiceGenerator;
 import retrofit2.Call;
@@ -36,7 +39,9 @@ public class FoursquareResultFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
-    FoursquareApi foursquareApi;
+    private FoursquareApi foursquareApi;
+    private List<Venue> venueList = new ArrayList<>();
+    private FoursquareResultRecyclerViewAdapter mAdapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -78,7 +83,8 @@ public class FoursquareResultFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new FoursquareResultRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            mAdapter = new FoursquareResultRecyclerViewAdapter(venueList, mListener);
+            recyclerView.setAdapter(mAdapter);
         }
         return view;
     }
@@ -90,7 +96,10 @@ public class FoursquareResultFragment extends Fragment {
         call.enqueue(new Callback<FoursquareResponse>() {
             @Override
             public void onResponse(Call<FoursquareResponse> call, Response<FoursquareResponse> response) {
-                Log.d("Success", String.valueOf(response.body().getResponse().getVenues().size()));
+                Log.d("Success" , String.valueOf(response.body().getResponse().getVenues().size()));
+                venueList.clear();
+                venueList.addAll(response.body().getResponse().getVenues());
+                mAdapter.notifyDataSetChanged();
             }
 
             @Override
