@@ -40,7 +40,7 @@ public class FoursquareResultFragment extends Fragment {
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     private FoursquareApi foursquareApi;
-    private List<Venue> venueList = new ArrayList<>();
+    public List<Venue> venueList = new ArrayList<>();
     private FoursquareResultRecyclerViewAdapter mAdapter;
 
     /**
@@ -127,5 +127,11 @@ public class FoursquareResultFragment extends Fragment {
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
     }
 }

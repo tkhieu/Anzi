@@ -4,8 +4,8 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -23,7 +23,11 @@ import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import kimhieu.me.anzi.events.KeywordSubmitEvent;
+import kimhieu.me.anzi.models.foursquare.Venue;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -36,6 +40,8 @@ public class SearchActivity extends AppCompatActivity {
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
+
+    private FoursquareResultFragment foursquareResultFragment;
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -80,6 +86,8 @@ public class SearchActivity extends AppCompatActivity {
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
                 Intent intent = new Intent(SearchActivity.this, MapsActivity.class);
+                List<Venue> list = foursquareResultFragment.venueList;
+                intent.putParcelableArrayListExtra("list", (ArrayList<? extends Parcelable>) list);
                 startActivity(intent);
             }
         });
@@ -167,8 +175,11 @@ public class SearchActivity extends AppCompatActivity {
             switch (position) {
                 case 0:
                     return GooglePlaceResultFragment.newInstance(1);
-                case 1:
-                    return FoursquareResultFragment.newInstance(1);
+                case 1: {
+                    foursquareResultFragment = FoursquareResultFragment.newInstance(1);
+                    return foursquareResultFragment;
+                }
+
             }
             return null;
         }
